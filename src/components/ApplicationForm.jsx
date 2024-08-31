@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ApplicationForm = () => {
   const { schoolType } = useParams();
@@ -21,6 +22,8 @@ const ApplicationForm = () => {
     gradeApplyingFor: '',
     profilePicture: null,
   });
+  const [showAlert, setShowAlert] = useState(false);
+  const [applicationId, setApplicationId] = useState('');
   const { toast } = useToast();
 
   const handleInputChange = (e) => {
@@ -38,12 +41,18 @@ const ApplicationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const applicationId = "APP-" + Math.random().toString(36).substr(2, 9);
+    const newApplicationId = "APP-" + Math.random().toString(36).substr(2, 9);
+    setApplicationId(newApplicationId);
+    setShowAlert(true);
+    // Optionally, you can still use the toast for additional feedback
     toast({
       title: "Application Submitted",
-      description: `Your application has been received. Your application ID is: ${applicationId}`,
+      description: `Your application has been received. Your application ID is: ${newApplicationId}`,
     });
-    navigate('/');
+    // Delay navigation to allow the user to see the alert
+    setTimeout(() => {
+      navigate('/');
+    }, 5000);
   };
 
   const goBack = () => {
@@ -59,6 +68,14 @@ const ApplicationForm = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {showAlert && (
+            <Alert className="mb-6">
+              <AlertTitle>Application Submitted Successfully</AlertTitle>
+              <AlertDescription>
+                Your application has been received. Your application ID is: {applicationId}
+              </AlertDescription>
+            </Alert>
+          )}
           <Button onClick={goBack} variant="outline" className="mb-6 w-full">
             <ChevronLeft className="mr-2 h-4 w-4" /> Back to Application Types
           </Button>
